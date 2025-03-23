@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using BepInEx;
 using UnityEngine;
 using HarmonyLib;
@@ -38,8 +40,8 @@ public class advancedAPIsCore : BaseUnityPlugin
     private static Type LuaAPIType;
     public static MethodInfo GetObjectId;
     
-    /* patch the stupid game logger */
-    private static Type RWDrvAssgn;
+    /*/* patch the stupid game logger #1#
+    private static Type RWDrvAssgn;*/
     
     // save this instance to be able to work with the logger & bepinhex
     public static advancedAPIsCore _instance;
@@ -67,8 +69,8 @@ public class advancedAPIsCore : BaseUnityPlugin
         var StartNewLuaVMoriginal = AccessTools.Method(typeof(HR.Lua.LuaAPI), "StartNewLuaVM", new Type[] { typeof(bool) });
         var StartNewLuaVMpostfix = AccessTools.Method(typeof(advancedAPIsCore), "StartNewLuaVM_Postfix");
         
-        var GetSpeedAtOriginal = AccessTools.Method(typeof(RWDrvAssgn), "GetSpeedAt", new Type[] { typeof(float) });
-        var GetSpeedAtFixed = AccessTools.Method(typeof(advancedAPIsCore), "GetSpeedAtFixed");
+        /*var GetSpeedAtOriginal = AccessTools.Method(typeof(RWDrvAssgn), "GetSpeedAt", new Type[] { typeof(float) });
+        var GetSpeedAtFixed = AccessTools.Method(typeof(advancedAPIsCore), "GetSpeedAtFixed");*/
 
         if (StartNewLuaVMoriginal == null)
         {
@@ -80,15 +82,15 @@ public class advancedAPIsCore : BaseUnityPlugin
             Logger.LogInfo("Manual patch applied to StartNewLuaVM.");
         }
         
-        if (GetSpeedAtOriginal == null)
+        /*if (GetSpeedAtOriginal == null)
         {
             Logger.LogError("GetSpeedAt method not found for manual patching.");
         }
         else
         {
-            manualharmony.Patch(GetSpeedAtOriginal, new HarmonyMethod(GetSpeedAtFixed));
+            manualharmony.Patch(GetSpeedAtOriginal, transpiler: new HarmonyMethod(GetSpeedAtFixed));
             Logger.LogInfo("Manual patch applied to GetSpeedAt.");
-        }
+        }*/
 
         // log all the manual patched methods from the plugin
         var manualPatchedMethods = manualharmony.GetPatchedMethods();
@@ -345,13 +347,21 @@ public class advancedAPIsCore : BaseUnityPlugin
     }
     
     /* FIX THE STUPID GAME LOGGER */
-    public static float GetSpeedAtFixed(RWDrvAssgn __instance, float position)
+    /*public static IEnumerable<CodeInstruction> GetSpeedAtFixed(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
-        // Access private fields using FieldRef
-        var _v1sq = AccessTools.FieldRefAccess<float>(typeof(RWDrvAssgn), "_v1sq");
-        var _invLength = AccessTools.FieldRefAccess<float>(typeof(RWDrvAssgn), "_invLength");
-        var _acc2 = AccessTools.FieldRefAccess<float>(typeof(RWDrvAssgn), "_acc2");
-
+        var newMethod = AccessTools.Method(typeof(advancedAPIsCore), "GetSpeedAtReplacement");
+    
+        return new List<CodeInstruction>
+        {
+            new CodeInstruction(OpCodes.Ldarg_0), // Load "this" (RWDrvAssgn instance)
+            new CodeInstruction(OpCodes.Ldarg_1), // Load position (float)
+            new CodeInstruction(OpCodes.Call, newMethod), // Call the replacement method
+            new CodeInstruction(OpCodes.Ret) // Return
+        };
+    }
+    
+    public static float GetSpeedAtReplacement(RWDrvAssgn __instance, float position)
+    {
         if (position < __instance.posBegin || position > __instance.posEnd)
         {
             Debug.Log($"Invalid GetSpeedAt Call: Asked for position {position} while this assignment is valid from {__instance.posBegin} to {__instance.posEnd} only.");
@@ -366,9 +376,15 @@ public class advancedAPIsCore : BaseUnityPlugin
                 return speedAt;
         }
 
-        // Access private fields through __instance
+        // Access private fields
+        var _v1sq = AccessTools.FieldRefAccess<float>(typeof(RWDrvAssgn), "_v1sq");
+        var _invLength = AccessTools.FieldRefAccess<float>(typeof(RWDrvAssgn), "_invLength");
+        var _acc2 = AccessTools.FieldRefAccess<float>(typeof(RWDrvAssgn), "_acc2");
+
         return Mathf.Sqrt(_v1sq(__instance) + (position - __instance.posBegin) * _invLength(__instance) * _acc2(__instance)) * speedAt;
-    }
+    }*/
+
+
 
 
 }

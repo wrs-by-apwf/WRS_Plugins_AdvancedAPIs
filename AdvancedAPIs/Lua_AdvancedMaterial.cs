@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Lua_AdvancedMaterial
 {
+    private static Texture2D _texture;
     private static string CustomLogosPath = advancedAPIsCore.WrsGamePath + "/CustomLogos";
 
     // call by the core class after the core is initialized (Awake method in core)
@@ -21,7 +22,6 @@ public class Lua_AdvancedMaterial
     // call by the core class after the core is updated (Update method in core)
     public static void Update()
     {
-        
     }
 
     // called by the core class after the core Setup is invoked
@@ -32,7 +32,7 @@ public class Lua_AdvancedMaterial
         advancedAPIsCore.RegisterModuleFunction(L, "AMaterial", "setVector", new Func<IntPtr, int>(Lua_setMaterialVector));
         advancedAPIsCore.RegisterModuleFunction(L, "AMaterial", "setColor", new Func<IntPtr, int>(Lua_setMaterialColor));
         advancedAPIsCore.RegisterModuleFunction(L, "AMaterial", "setFloat", new Func<IntPtr, int>(Lua_setMaterialFloat));
-        
+
         // custom logo api 
         advancedAPIsCore.RegisterModuleFunction(L, "AMaterial", "getTexturesList", new Func<IntPtr, int>(Lua_getTexturesList));
         advancedAPIsCore.RegisterModuleFunction(L, "AMaterial", "setCustomTexture", new Func<IntPtr, int>(Lua_setCustomTexture));
@@ -40,6 +40,7 @@ public class Lua_AdvancedMaterial
         // log that the setup is complete
         advancedAPIsCore.LogInfo("AMaterial APIs have been added");
     }
+
     internal static int Lua_setMaterialVector(IntPtr L)
     {
         // assert the number of arguments
@@ -47,7 +48,7 @@ public class Lua_AdvancedMaterial
 
         // get the transform object bind to the id in the lua stack
         Transform transformObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
-        
+
         // Get the GameObject
         GameObject obj = transformObj.gameObject;
 
@@ -79,6 +80,7 @@ public class Lua_AdvancedMaterial
 
         return 0;
     }
+
     internal static int Lua_setMaterialColor(IntPtr L)
     {
         // assert the number of arguments
@@ -86,7 +88,7 @@ public class Lua_AdvancedMaterial
 
         // get the transform object bind to the id in the lua stack
         Transform transformObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
-        
+
         // Get the GameObject
         GameObject obj = transformObj.gameObject;
 
@@ -118,15 +120,15 @@ public class Lua_AdvancedMaterial
 
         return 0;
     }
+
     internal static int Lua_setMaterialFloat(IntPtr L)
     {
-
         // assert the number of arguments
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 3 });
 
         // get the transform object bind to the id in the lua stack
         Transform transformObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
-        
+
         // Get the GameObject
         GameObject obj = transformObj.gameObject;
 
@@ -158,11 +160,11 @@ public class Lua_AdvancedMaterial
 
         return 0;
     }
-    
+
     internal static int Lua_getTexturesList(IntPtr L)
     {
         advancedAPIsCore.LogInfo("ask for the list of textures");
-        
+
         // get all the filenames for the files that end with .png in the CustomLogos folder, compile them into a string and return it
         string[] files = Directory.GetFiles(CustomLogosPath, "*.png");
         string result = "";
@@ -170,26 +172,29 @@ public class Lua_AdvancedMaterial
         {
             result += Path.GetFileName(file) + ",\n";
         }
-        
+
         // log the result
         advancedAPIsCore.LogInfo(result);
-        
+
         // push the string to the lua stack
         advancedAPIsCore.lua_pushstring.Invoke(null, new object[] { L, result });
-        
+
         return 1;
     }
+
     internal static int Lua_setCustomTexture(IntPtr L)
     {
-
         // assert the number of arguments
-        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 3 });
+        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 2 });
+        advancedAPIsCore.LogInfo("cc");
 
         // get the transform object bind to the id in the lua stack
         Transform transformObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
-        
+        advancedAPIsCore.LogInfo("dd");
+
         // Get the GameObject
         GameObject obj = transformObj.gameObject;
+        advancedAPIsCore.LogInfo("aa");
 
         // Get the MeshRenderer
         MeshRenderer mr = obj.GetComponent<MeshRenderer>();
@@ -199,43 +204,96 @@ public class Lua_AdvancedMaterial
             return 0;
         }
 
+        advancedAPIsCore.LogInfo("rr");
+
         // Get the Material
         Material ObjectMaterial = mr.sharedMaterial;
-        
+        advancedAPIsCore.LogInfo("jj");
+
         // assert the string
         string filename = (string)advancedAPIsCore.luaCS_assertGetString.Invoke(null, new object[] { L, 2, false });
+        advancedAPIsCore.LogInfo("gg");
 
         // if the filename extension is not .png then we refuse to do anything
         if (!filename.EndsWith(".png"))
         {
-            advancedAPIsCore.LogError("The texture file must be a .png file");
+            // if the filename don't have any extension, we add the .png extension
+            if (!filename.Contains("."))
+            {
+                filename += ".png";
+            }
+            else
+            {
+                advancedAPIsCore.LogError("The texture file must be a .png file");
+                return 0;
+            }
+        }
+
+        advancedAPIsCore.LogInfo("da");
+
+        // make sure the filename is not empty
+        if (string.IsNullOrEmpty(filename))
+        {
+            advancedAPIsCore.LogError("The filename cannot be empty");
             return 0;
         }
-        
+
+        advancedAPIsCore.LogInfo("dz");
+
+        // make sure the filename does not contain any path
+        if (filename.Contains("/"))
+        {
+            advancedAPIsCore.LogError("The filename cannot contain any path");
+            return 0;
+        }
+
+        advancedAPIsCore.LogInfo("sd");
+
+        // make sure the filename does not contain any malicious characters, code, etc
+        if (filename.Contains(".."))
+        {
+            advancedAPIsCore.LogError("bruh, you serious bitch");
+            return 0;
+        }
+
+        advancedAPIsCore.LogInfo("tr");
+
         // check if the file exists
         string path = CustomLogosPath + "/" + filename;
-        
+
+        advancedAPIsCore.LogInfo("dfg");
+
         if (!File.Exists(path))
         {
             advancedAPIsCore.LogError($"The file '{filename}' does not exist in the CustomLogos folder");
             return 0;
         }
+
+        advancedAPIsCore.LogInfo("zrdfs");
         
-        // fetch the size of the texture file
-        FileInfo fi = new FileInfo(path);
-        long size = fi.Length;
-        
-        // Load the texture 
-        Texture2D texture = new Texture2D((int)size, (int)size, TextureFormat.RGBA32, false);
+        // if a texture already exist make it go away (memory leak)
+        if (_texture != null)
+        {
+            UnityEngine.Object.Destroy(_texture);
+        }
+
+        // Load the texture from file
+        _texture = new Texture2D(2, 2);
         byte[] fileData = File.ReadAllBytes(path);
-        texture.LoadRawTextureData(fileData);
-        texture.Apply();
-        
-        // Set the texture to the material
-        ObjectMaterial.SetTexture("_MainTex", texture);
+
+        // Directly call LoadImage() on the Texture2D object
+        if (!_texture.LoadImage(fileData))
+        {
+            advancedAPIsCore.LogError("Failed to load image data from file.");
+            return 0;
+        }
+
+        // Apply the texture to the material
+        ObjectMaterial.SetTexture("_MainTex", _texture);
+
+
+        advancedAPIsCore.LogInfo("dszefsdfsdfdyrthedzze");
 
         return 0;
     }
-    
-    
 }
