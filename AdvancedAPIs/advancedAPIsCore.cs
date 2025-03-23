@@ -38,6 +38,9 @@ public class advancedAPIsCore : BaseUnityPlugin
     private static Type LuaAPIType;
     public static MethodInfo GetObjectId;
     
+    /* patch the stupid game logger */
+    private static Type RWDrvAssgn;
+    
     // save this instance to be able to work with the logger & bepinhex
     public static advancedAPIsCore _instance;
         
@@ -61,17 +64,30 @@ public class advancedAPIsCore : BaseUnityPlugin
 
         // apply manually the harmony patch 
         var manualharmony = new Harmony("api.apwf.materials");
-        var original = AccessTools.Method(typeof(HR.Lua.LuaAPI), "StartNewLuaVM", new Type[] { typeof(bool) });
-        var postfix = AccessTools.Method(typeof(advancedAPIsCore), "StartNewLuaVM_Postfix");
+        var StartNewLuaVMoriginal = AccessTools.Method(typeof(HR.Lua.LuaAPI), "StartNewLuaVM", new Type[] { typeof(bool) });
+        var StartNewLuaVMpostfix = AccessTools.Method(typeof(advancedAPIsCore), "StartNewLuaVM_Postfix");
+        
+        var GetSpeedAtOriginal = AccessTools.Method(typeof(RWDrvAssgn), "GetSpeedAt", new Type[] { typeof(float) });
+        var GetSpeedAtFixed = AccessTools.Method(typeof(advancedAPIsCore), "GetSpeedAtFixed");
 
-        if (original == null)
+        if (StartNewLuaVMoriginal == null)
         {
             Logger.LogError("StartNewLuaVM method not found for manual patching.");
         }
         else
         {
-            manualharmony.Patch(original, postfix: new HarmonyMethod(postfix));
+            manualharmony.Patch(StartNewLuaVMoriginal, postfix: new HarmonyMethod(StartNewLuaVMpostfix));
             Logger.LogInfo("Manual patch applied to StartNewLuaVM.");
+        }
+        
+        if (GetSpeedAtOriginal == null)
+        {
+            Logger.LogError("GetSpeedAt method not found for manual patching.");
+        }
+        else
+        {
+            manualharmony.Patch(GetSpeedAtOriginal, new HarmonyMethod(GetSpeedAtFixed));
+            Logger.LogInfo("Manual patch applied to GetSpeedAt.");
         }
 
         // log all the manual patched methods from the plugin
@@ -327,4 +343,32 @@ public class advancedAPIsCore : BaseUnityPlugin
     {
         _instance.Logger.LogWarning(message);
     }
+    
+    /* FIX THE STUPID GAME LOGGER */
+    public static float GetSpeedAtFixed(RWDrvAssgn __instance, float position)
+    {
+        // Access private fields using FieldRef
+        var _v1sq = AccessTools.FieldRefAccess<float>(typeof(RWDrvAssgn), "_v1sq");
+        var _invLength = AccessTools.FieldRefAccess<float>(typeof(RWDrvAssgn), "_invLength");
+        var _acc2 = AccessTools.FieldRefAccess<float>(typeof(RWDrvAssgn), "_acc2");
+
+        if (position < __instance.posBegin || position > __instance.posEnd)
+        {
+            Debug.Log($"Invalid GetSpeedAt Call: Asked for position {position} while this assignment is valid from {__instance.posBegin} to {__instance.posEnd} only.");
+            return 0.0f;
+        }
+
+        float speedAt = 0.0f;
+        if (__instance.drive != null)
+        {
+            speedAt = __instance.drive.currentSpeed;
+            if (__instance.isAcceleratorDrive)
+                return speedAt;
+        }
+
+        // Access private fields through __instance
+        return Mathf.Sqrt(_v1sq(__instance) + (position - __instance.posBegin) * _invLength(__instance) * _acc2(__instance)) * speedAt;
+    }
+
+
 }

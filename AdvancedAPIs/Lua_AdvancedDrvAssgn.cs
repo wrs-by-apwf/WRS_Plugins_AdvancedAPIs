@@ -21,6 +21,7 @@ public class Lua_AdvancedDrvAssgn
         advancedAPIsCore.InvokeCreateModule(L, "ARWDrvAssgn");
         advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "setDistance", new Func<IntPtr, int>(Lua_SetDistance));
         advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "setInclination", new Func<IntPtr, int>(Lua_setInclination));
+        advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "invertInclination", new Func<IntPtr, int>(Lua_invertInclination));
         advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "setSpeedScale0", new Func<IntPtr, int>(Lua_setSpeedScale0));
         advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "setSpeedScale1", new Func<IntPtr, int>(Lua_setSpeedScale1));
 
@@ -61,7 +62,6 @@ public class Lua_AdvancedDrvAssgn
             advancedAPIsCore.LogError($"Invalid DriveNumber {DriveNumber}. Must be between 0 and {spline.drives.Count - 1}.");
             return 0;
         }
-
 
         // Fetch the Drive assignment
         RWDrvAssgn DrvAssgn = spline.drives[DriveNumber];
@@ -111,6 +111,42 @@ public class Lua_AdvancedDrvAssgn
 
         // set the inclination
         DrvAssgn.inclination = Inclination;
+
+        return 0;
+    }
+    
+    internal static int Lua_invertInclination(IntPtr L)
+    {
+        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 3 });
+
+        // get the transform object bind to the id in the lua stack
+        Transform transformObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
+
+        // Get the GameObject
+        GameObject obj = transformObj.gameObject;
+
+        // Get the RWSpline component
+        RWSpline spline = obj.GetComponent<RWSpline>();
+        if (spline == null)
+        {
+            advancedAPIsCore.LogError($"GameObject '{obj.name}' exists but does NOT have a MeshRenderer!");
+            return 0;
+        }
+
+        // assert the numbers (position of the DrvAssgn in the drives list of the spline and the inclination)
+        float DriveNumber = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 2 });
+        bool isPositive = (bool)advancedAPIsCore.luaCS_assertGetBoolean.Invoke(null, new object[] { L, 3, false });
+
+        // fetch the DrvAssgn by the index
+        RWDrvAssgn DrvAssgn = spline.drives[(int)DriveNumber];
+
+        // get the current inclination
+        float inclination = DrvAssgn.inclination;
+
+        // set the inclination 
+        DrvAssgn.inclination = isPositive ? Math.Abs(inclination) : -Math.Abs(inclination);
+        
+        advancedAPIsCore.LogInfo($"Inclination of Drive {DriveNumber} set to {DrvAssgn.inclination}");
 
         return 0;
     }
