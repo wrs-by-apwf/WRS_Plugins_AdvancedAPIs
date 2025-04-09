@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Reflection;
 using UnityEngine;
 
@@ -114,23 +114,23 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 3 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
         Transform transformFromLuaApi =
             (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
-        RWSpline componentFromLuaApi =
-            (RWSpline)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 2, typeof(RWSpline) });
+        AdvancedRWSpline componentFromLuaApi =
+            (AdvancedRWSpline)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 2, typeof(AdvancedRWSpline) });
         float number = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 3 });
-        RWCarrier rwCarrier = transformFromLuaApi.GetComponent<RWCarrier>();
-        if (rwCarrier == null)
+        AdvancedRWCarrier AdvancedRWCarrier = transformFromLuaApi.GetComponent<AdvancedRWCarrier>();
+        if (AdvancedRWCarrier == null)
         {
-            rwCarrier = transformFromLuaApi.gameObject.AddComponent<RWCarrier>();
-            RWCarrier.carrierInstances.Add(rwCarrier);
+            AdvancedRWCarrier = transformFromLuaApi.gameObject.AddComponent<AdvancedRWCarrier>();
+            AdvancedRWCarrier.carrierInstances.Add(AdvancedRWCarrier);
         }
 
-        rwCarrier.SetInitialPosition(componentFromLuaApi, number);
+        AdvancedRWCarrier.SetInitialPosition(componentFromLuaApi, number);
         return 0;
     }
 
@@ -138,13 +138,13 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 4 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier componentFromLuaApi =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null,
-                new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier componentFromLuaApi =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null,
+                new object[] { L, 1, typeof(AdvancedRWCarrier) });
         Transform transformFromLuaApi =
             (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 2, false });
         float number1 = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 3 });
@@ -159,12 +159,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 2 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier = (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null,
-            new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier = (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null,
+            new object[] { L, 1, typeof(AdvancedRWCarrier) });
         carrier.dampingCoeffX = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 2 });
         return 0;
     }
@@ -173,12 +173,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 3 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier componentFromLuaApi =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier componentFromLuaApi =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
         Transform transformFromLuaApi =
             (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 2, false });
         string trigger = (string)advancedAPIsCore.luaCS_assertGetString.Invoke(null, new object[] { L, 3, false });
@@ -199,12 +199,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 1 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
         advancedAPIsCore.lua_pushnumber.Invoke(null, new object[] { L, carrier.GetSpeed() });
         return 1;
     }
@@ -213,12 +213,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 2 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
         carrier.SetSpeed((float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 2 }));
         return 0;
     }
@@ -228,12 +228,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 2 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
         carrier.invertZOrientation = (bool)advancedAPIsCore.luaCS_assertGetBoolean.Invoke(null, new object[] { L, 2 });
         return 0;
     }
@@ -242,12 +242,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 1 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
 
         Array.Resize(ref carrier.passengerSeats, 0);
         Array.Resize(ref carrier.passengers, 0);
@@ -259,12 +259,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 1 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
         advancedAPIsCore.lua_pushinteger.Invoke(null,
             new object[] { L, (int)Mathf.Floor(carrier.GetPassengerCount() + 0.5f) });
         return 1;
@@ -274,12 +274,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 1 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
 
         float n = 0.0f;
         for (int index = 0; index < carrier.passengerProbabilities.Length; ++index)
@@ -295,12 +295,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 1 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
         carrier.DespawnPassengers(true);
         return 0;
     }
@@ -309,12 +309,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 1 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
         Transform transformFromLuaApi =
             (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 2, false });
         float number = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 3 });
@@ -327,7 +327,7 @@ public class Lua_AdvancedRWCarrier
         return 0;
     }
 
-    private static bool ValidateCarrier(RWCarrier carrier)
+    private static bool ValidateCarrier(AdvancedRWCarrier carrier)
     {
         return carrier != null && !carrier.fixedSpeed;
     }
@@ -348,8 +348,8 @@ public class Lua_AdvancedRWCarrier
         double y = number2;
         double z = number3;
 
-        RWCarrier closestCarrier =
-            RWCarrier.GetClosestCarrier(new Vector3((float)number1, (float)y, (float)z), range, (ValidateCarrier));
+        AdvancedRWCarrier closestCarrier =
+            AdvancedRWCarrier.GetClosestCarrier(new Vector3((float)number1, (float)y, (float)z), range, (ValidateCarrier));
         if (!ValidateCarrier(closestCarrier))
         {
             advancedAPIsCore.lua_pushnil.Invoke(null, new object[] { L });
@@ -385,8 +385,8 @@ public class Lua_AdvancedRWCarrier
             max = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 6 });
         }
 
-        RWCarrier closestCarrier =
-            RWCarrier.GetClosestCarrier(new Vector3((float)number1, (float)number2, (float)number3), range,
+        AdvancedRWCarrier closestCarrier =
+            AdvancedRWCarrier.GetClosestCarrier(new Vector3((float)number1, (float)number2, (float)number3), range,
                 (ValidateCarrier));
         if (!ValidateCarrier(closestCarrier))
         {
@@ -416,19 +416,19 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.lua_pushinteger.Invoke(null, new object[] { L, 3 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWSpline
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWSpline
         var luaCS_assertGetComponentFromLuaAPI2 =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWSpline));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWSpline));
 
-        RWSpline spline =
-            (RWSpline)luaCS_assertGetComponentFromLuaAPI2.Invoke(null, new object[] { L, 2, typeof(RWSpline) });
+        AdvancedRWSpline spline =
+            (AdvancedRWSpline)luaCS_assertGetComponentFromLuaAPI2.Invoke(null, new object[] { L, 2, typeof(AdvancedRWSpline) });
 
         float number = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 3 });
         carrier.TeleportTo(spline, number);
@@ -439,12 +439,12 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 1 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
 
 
         advancedAPIsCore.lua_pushinteger.Invoke(null,
@@ -458,27 +458,43 @@ public class Lua_AdvancedRWCarrier
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 1 });
 
-        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to RWCarrier
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
         var luaCS_assertGetComponentFromLuaAPI =
-            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(RWCarrier));
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
 
-        RWCarrier carrier =
-            (RWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(RWCarrier) });
+        AdvancedRWCarrier carrier =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
 
         advancedAPIsCore.lua_pushnumber.Invoke(null, new object[] { L, carrier.GetPosition() });
 
         return 1;
     }
 
-    /*
-
-
     internal static int Lua_addCarrierPart(IntPtr L)
     {
-        NativeLua.luaCS_assertNumArgs(L, 3);
-        RWCarrier componentFromLuaApi1 = NativeLua.luaCS_assertGetComponentFromLuaAPI<RWCarrier>(L, 1);
-        Animation componentFromLuaApi2 = NativeLua.luaCS_assertGetComponentFromLuaAPI<Animation>(L, 2);
-        string str = NativeLua.luaCS_assertGetString(L, 3);
+        // assert the number of arguments
+        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 3 });
+
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
+        var luaCS_assertGetComponentFromLuaAPI =
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
+
+        // get the transform object bind to the id in the lua stack
+        Transform transformFromLuaApi =
+            (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
+
+        // get the AdvancedRWCarrier component from the transform
+        AdvancedRWCarrier componentFromLuaApi =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 2, typeof(AdvancedRWCarrier) });
+
+        // get the Animation component from the transform
+        Animation componentFromLuaApi2 =
+            (Animation)advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 3, typeof(Animation) });
+
+        // get the string from the lua stack
+        string str = (string)advancedAPIsCore.luaCS_assertGetString.Invoke(null, new object[] { L, 4, false });
+
+        // create a new AnimatedCarrierPart object
         RWCarrier.AnimatedCarrierPart part = new RWCarrier.AnimatedCarrierPart()
         {
             animation = componentFromLuaApi2,
@@ -486,63 +502,121 @@ public class Lua_AdvancedRWCarrier
             position = 0.0f,
             targetPosition = 0.0f
         };
-        componentFromLuaApi1.AddCarrierPart(part);
+
+        // add the AnimatedCarrierPart to the AdvancedRWCarrier
+        componentFromLuaApi.AddCarrierPart(part);
+
+        // return 0 to indicate success
         return 0;
+    }
+
+    internal static int Lua_getTotalCarrierMass(IntPtr L)
+    {
+        // assert the number of arguments
+        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 1 });
+        var luaCS_assertGetComponentFromLuaAPI =
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
+
+        AdvancedRWCarrier carrier = (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
+
+        advancedAPIsCore.lua_pushnumber.Invoke(null, new object[] { L, carrier.currentMass });
+        return 1;
     }
 
     internal static int Lua_getCarrierPartPosition(IntPtr L)
     {
-        NativeLua.luaCS_assertNumArgs(L, 2);
-        RWCarrier.AnimatedCarrierPart carrierPart = NativeLua.luaCS_assertGetComponentFromLuaAPI<RWCarrier>(L, 1)
-            .GetCarrierPart(NativeLua.luaCS_assertGetString(L, 2));
+        
+        // assert the number of arguments
+        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 2 });
+        
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
+        var luaCS_assertGetComponentFromLuaAPI =
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
+        
+        // get the AdvancedRWCarrier component from the transform
+        AdvancedRWCarrier componentFromLuaApi =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
+        
+        // get the string from the lua stack
+        string str = (string)advancedAPIsCore.luaCS_assertGetString.Invoke(null, new object[] { L, 2, false });
+        
+        // get the AnimatedCarrierPart from the AdvancedRWCarrier
+        RWCarrier.AnimatedCarrierPart carrierPart = componentFromLuaApi.GetCarrierPart(str);
+        
+        // if the carrierPart is not null, push its position and targetPosition to the lua stack
         if (carrierPart != null)
         {
-            NativeLua.lua_pushnumber(L, (double)carrierPart.position);
-            NativeLua.lua_pushnumber(L, (double)carrierPart.targetPosition);
+            advancedAPIsCore.lua_pushnumber.Invoke(null, new object[] { L, carrierPart.position });
+            advancedAPIsCore.lua_pushnumber.Invoke(null, new object[] { L, carrierPart.targetPosition });
         }
         else
         {
-            NativeLua.lua_pushnil(L);
-            NativeLua.lua_pushnil(L);
+            // if the carrierPart is null, push nil to the lua stack
+            advancedAPIsCore.lua_pushnil.Invoke(null, new object[] { L });
+            advancedAPIsCore.lua_pushnil.Invoke(null, new object[] { L });
         }
-
+        
+        // return 2 (two element given to the lua stack)
         return 2;
     }
 
     internal static int Lua_setCarrierPartPosition(IntPtr L)
     {
-        NativeLua.luaCS_assertNumArgs(L, 4);
-        RWCarrier componentFromLuaApi = NativeLua.luaCS_assertGetComponentFromLuaAPI<RWCarrier>(L, 1);
-        string str = NativeLua.luaCS_assertGetString(L, 2);
-        float number = NativeLua.luaCS_assertGetNumber(L, 3);
-        int integer = NativeLua.luaCS_assertGetInteger(L, 4);
-        string channel = str;
-        double position = (double)number;
-        int moveMode = integer;
-        componentFromLuaApi.SetCarrierPartPosition(channel, (float)position, moveMode);
+        
+        // assert the number of arguments
+        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 4 });
+        
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
+        var luaCS_assertGetComponentFromLuaAPI =
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
+        
+        // get the AdvancedRWCarrier component from the transform
+        AdvancedRWCarrier componentFromLuaApi =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
+        
+        // get the string from the lua stack
+        string str = (string)advancedAPIsCore.luaCS_assertGetString.Invoke(null, new object[] { L, 2, false });
+        // get the float from the lua stack
+        float number = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 3 });
+        
+        // get the int from the lua stack
+        int integer = (int)advancedAPIsCore.luaCS_assertGetInteger.Invoke(null, new object[] { L, 4 });
+        
+        // set the carrier part position
+        componentFromLuaApi.SetCarrierPartPosition(str, number, integer);
+        
+        // return 0 (no elements given to the lua stack)
         return 0;
+        
     }
 
     internal static int Lua_overrideCarrierPartPosition(IntPtr L)
     {
-        NativeLua.luaCS_assertNumArgs(L, 4);
-        RWCarrier componentFromLuaApi = NativeLua.luaCS_assertGetComponentFromLuaAPI<RWCarrier>(L, 1);
-        string str = NativeLua.luaCS_assertGetString(L, 2);
-        float number1 = NativeLua.luaCS_assertGetNumber(L, 3);
-        float number2 = NativeLua.luaCS_assertGetNumber(L, 4);
-        string channel = str;
-        componentFromLuaApi.GetCarrierPart(channel)?.SetPositionOverride(number1, number2);
+        
+        // assert the number of arguments
+        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 4 });
+        
+        // first transform "luaCS_assertGetComponentFromLuaAPI" into a generic method that cast the component to AdvancedRWCarrier
+        var luaCS_assertGetComponentFromLuaAPI =
+            advancedAPIsCore.luaCS_assertGetComponentFromLuaAPI.MakeGenericMethod(typeof(AdvancedRWCarrier));
+        
+        // get the AdvancedRWCarrier component from the transform
+        AdvancedRWCarrier componentFromLuaApi =
+            (AdvancedRWCarrier)luaCS_assertGetComponentFromLuaAPI.Invoke(null, new object[] { L, 1, typeof(AdvancedRWCarrier) });
+        
+        // get the string from the lua stack
+        string str = (string)advancedAPIsCore.luaCS_assertGetString.Invoke(null, new object[] { L, 2, false });
+        
+        // get the float from the lua stack
+        float number1 = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 3 });
+        
+        // get the float from the lua stack
+        float number2 = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 4 });
+        
+        // set the carrier part position
+        componentFromLuaApi.GetCarrierPart(str)?.SetPositionOverride(number1, number2);
+        
+        // return 0 (no elements given to the lua stack)
         return 0;
     }
-
-
-    internal static int Lua_getTotalCarrierMass(IntPtr L)
-    {
-        NativeLua.luaCS_assertNumArgs(L, 1);
-        RWCarrier componentFromLuaApi = NativeLua.luaCS_assertGetComponentFromLuaAPI<RWCarrier>(L, 1);
-        NativeLua.lua_pushnumber(L, (double)componentFromLuaApi.currentMass);
-        return 1;
-    }
-
-    #1#
-}*/
+}

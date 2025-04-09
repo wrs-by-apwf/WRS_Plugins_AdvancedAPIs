@@ -55,6 +55,9 @@
         <Reference Include="UnityEngine">
           <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Winter Resort Simulator Season 2\WinterResortSimulator_Season2_Data\Managed\UnityEngine.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.AnimationModule">
+          <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Winter Resort Simulator Season 2\WinterResortSimulator_Season2_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine.CoreModule">
           <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Winter Resort Simulator Season 2\WinterResortSimulator_Season2_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
@@ -64,12 +67,17 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="advancedAPIsCore.cs" />
+        <Compile Include="AdvancedCarrierManager.cs" />
         <Compile Include="AdvancedRWCarrier.cs" />
+        <Compile Include="AdvancedRWDrvAssgn.cs" />
+        <Compile Include="AdvancedRWLuaProxySensor.cs" />
+        <Compile Include="AdvancedRWLuaTrigger.cs" />
         <Compile Include="AdvancedRWSpline.cs" />
         <Compile Include="Lua_AdvancedMaterial.cs" />
         <Compile Include="Lua_AdvancedRWCarrier.cs" />
         <Compile Include="Lua_AdvancedDrvAssgn.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="rootUpdate.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

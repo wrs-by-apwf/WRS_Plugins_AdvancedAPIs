@@ -22,8 +22,8 @@ public class Lua_AdvancedDrvAssgn
         advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "setDistance", new Func<IntPtr, int>(Lua_SetDistance));
         advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "setInclination", new Func<IntPtr, int>(Lua_setInclination));
         advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "invertInclination", new Func<IntPtr, int>(Lua_invertInclination));
-        advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "setSpeedScale0", new Func<IntPtr, int>(Lua_setSpeedScale0));
-        advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "setSpeedScale1", new Func<IntPtr, int>(Lua_setSpeedScale1));
+        advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "removeDrive", new Func<IntPtr, int>(Lua_removeDrive));
+        advancedAPIsCore.RegisterModuleFunction(L, "ARWDrvAssgn", "addDrive", new Func<IntPtr, int>(Lua_addDrive));
 
         // log that the setup is complete
         advancedAPIsCore.LogInfo("ARWDrvAssgn APIs have been added");
@@ -81,9 +81,7 @@ public class Lua_AdvancedDrvAssgn
 
         return 0;
     }
-
-
-
+    
     internal static int Lua_setInclination(IntPtr L)
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 3 });
@@ -108,7 +106,9 @@ public class Lua_AdvancedDrvAssgn
 
         // fetch the DrvAssgn by the index
         RWDrvAssgn DrvAssgn = spline.drives[(int)DriveNumber];
-
+        
+        advancedAPIsCore.LogInfo($"Inclination of Drive {DriveNumber} set to {DrvAssgn.inclination}");
+        
         // set the inclination
         DrvAssgn.inclination = Inclination;
 
@@ -150,10 +150,10 @@ public class Lua_AdvancedDrvAssgn
 
         return 0;
     }
-
-    internal static int Lua_setSpeedScale0(IntPtr L)
+    
+    internal static int Lua_removeDrive(IntPtr L)
     {
-        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 3 });
+        advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 2 });
 
         // get the transform object bind to the id in the lua stack
         Transform transformObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
@@ -171,45 +171,72 @@ public class Lua_AdvancedDrvAssgn
 
         // assert the numbers (position of the DrvAssgn in the drives list of the spline and the inclination)
         float DriveNumber = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 2 });
-        float Inclination = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 3 });
 
         // fetch the DrvAssgn by the index
         RWDrvAssgn DrvAssgn = spline.drives[(int)DriveNumber];
-
-        // set the inclination
-        DrvAssgn.speedScale0 = Inclination;
+        
+        advancedAPIsCore.LogInfo($"Drive removed from the drive assign");
+        
+        // remove the drive
+        DrvAssgn.drive = null;
 
         return 0;
     }
-
-    internal static int Lua_setSpeedScale1(IntPtr L)
+    
+    internal static int Lua_addDrive(IntPtr L)
     {
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 3 });
 
         // get the transform object bind to the id in the lua stack
-        Transform transformObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
-
+        Transform splineObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
+        
         // Get the GameObject
-        GameObject obj = transformObj.gameObject;
+        GameObject obj = splineObj.gameObject;
 
         // Get the RWSpline component
         RWSpline spline = obj.GetComponent<RWSpline>();
         if (spline == null)
         {
-            advancedAPIsCore.LogError($"GameObject '{obj.name}' exists but does NOT have a MeshRenderer!");
+            advancedAPIsCore.LogError($"GameObject '{obj.name}' exists but does NOT have a RWSpline component!");
             return 0;
         }
+        
+        // get the transform object bind to the id in the lua stack
+        Transform driveObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 2, false });
+        
+        // Get the GameObject
+        GameObject dobj = driveObj.gameObject;
+
+        // Get the RWDrive component
+        RWDrive drivecmp = dobj.GetComponent<RWDrive>();
+        if (drivecmp == null)
+        {
+            advancedAPIsCore.LogError($"GameObject '{obj.name}' exists but does NOT have a RWDrive component!");
+            return 0;
+        }
+        
 
         // assert the numbers (position of the DrvAssgn in the drives list of the spline and the inclination)
-        float DriveNumber = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 2 });
-        float Inclination = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 3 });
+        float driveNumber = (float)advancedAPIsCore.luaCS_assertGetNumber.Invoke(null, new object[] { L, 3 });
 
         // fetch the DrvAssgn by the index
-        RWDrvAssgn DrvAssgn = spline.drives[(int)DriveNumber];
-
-        // set the inclination
-        DrvAssgn.speedScale1 = Inclination;
+        RWDrvAssgn drvAssgn = spline.drives[(int)driveNumber];
+        
+        if (drvAssgn == null)
+        {
+            advancedAPIsCore.LogError($"Drive assignment {driveNumber} does not exist");
+            return 0;
+        }
+        
+        // add the drive
+        drvAssgn.drive = drivecmp;
+        
+        // engage the drive
+        drvAssgn.engaged = true;
+        
+        advancedAPIsCore.LogInfo($"Drive added to the drive assignement");
 
         return 0;
     }
+
 }

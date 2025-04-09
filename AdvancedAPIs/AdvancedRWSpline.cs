@@ -1,5 +1,4 @@
 
-/*
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,72 +18,74 @@ public class AdvancedRWSpline : MonoBehaviour
   private int _prevIdx;
   protected Quaternion _lastRotation = Quaternion.identity;
   protected bool _lastRotChanged = true;
-  public AdvancedRWSpline.AnimatedPartRail[] rails = new AdvancedRWSpline.AnimatedPartRail[0];
-  public List<RWDrvAssgn> drives = new List<RWDrvAssgn>();
+  public AnimatedPartRail[] Rails = Array.Empty<AnimatedPartRail>();
+  public List<AdvancedRWDrvAssgn> drives = new List<AdvancedRWDrvAssgn>();
   public List<AdvancedRWCarrier> carriers = new List<AdvancedRWCarrier>();
-  private List<RWLuaTrigger> _triggers = new List<RWLuaTrigger>();
-  private List<RWLuaProxySensor> _proxySensors = new List<RWLuaProxySensor>();
+  private List<AdvancedRWLuaTrigger> _triggers = new List<AdvancedRWLuaTrigger>();
+  private List<AdvancedRWLuaProxySensor> _proxySensors = new List<AdvancedRWLuaProxySensor>();
 
-  public bool rotationChanged => this._lastRotChanged;
+  public bool rotationChanged => _lastRotChanged;
 
   public AdvancedRWSpline GetNext()
   {
-    return this._nextIdx < 0 || this._nextIdx >= this.nextSplines.Length ? (AdvancedRWSpline) null : this.nextSplines[this._nextIdx];
+    return _nextIdx < 0 || _nextIdx >= nextSplines.Length ? (AdvancedRWSpline) null : nextSplines[_nextIdx];
   }
 
   public AdvancedRWSpline GetPrev()
   {
-    return this._prevIdx < 0 || this._prevIdx >= this.prevSplines.Length ? (AdvancedRWSpline) null : this.prevSplines[this._prevIdx];
+    return _prevIdx < 0 || _prevIdx >= prevSplines.Length ? (AdvancedRWSpline) null : prevSplines[_prevIdx];
   }
 
-  public int GetPrevIdx() => this._prevIdx;
+  public int GetPrevIdx() => _prevIdx;
 
-  public int GetNextIdx() => this._nextIdx;
+  public int GetNextIdx() => _nextIdx;
 
   public void SetPrevIdx(int idx)
   {
-    this._prevIdx = Mathf.Clamp(idx, 0, this.prevSplines.Length - 1);
+    _prevIdx = Mathf.Clamp(idx, 0, prevSplines.Length - 1);
   }
 
   public void SetNextIdx(int idx)
   {
-    this._nextIdx = Mathf.Clamp(idx, 0, this.nextSplines.Length - 1);
+    _nextIdx = Mathf.Clamp(idx, 0, nextSplines.Length - 1);
   }
 
   public void CleanupPrefab()
   {
-    this.carriers = new List<AdvancedRWCarrier>();
-    this._triggers = new List<RWLuaTrigger>();
-    this._proxySensors = new List<RWLuaProxySensor>();
+    carriers = new List<AdvancedRWCarrier>();
+    _triggers = new List<AdvancedRWLuaTrigger>();
+    _proxySensors = new List<AdvancedRWLuaProxySensor>();
   }
 
   public static void GlobalLateUpdate()
   {
     float ropewayDt = GameControl.ropewayDt;
-    foreach (AdvancedRWSpline instance in AdvancedRWSpline.instances)
+    foreach (AdvancedRWSpline instance in instances)
     {
       if (instance.carriers.Count != 0)
       {
         instance._lastRotChanged = instance.transform.rotation != instance._lastRotation;
         instance._lastRotation = instance.transform.rotation;
-        foreach (RWDrvAssgn drive in instance.drives)
+        foreach (AdvancedRWDrvAssgn drive in instance.drives)
         {
-          if (!((UnityEngine.Object) drive.drive != (UnityEngine.Object) null) && (double) drive.gravity != 0.0)
-            AdvancedRWSpline.UpdateGravitySpline(ropewayDt, instance, drive);
+          if (!drive.drive || !drive.engaged)
+          {
+            UpdateGravitySpline(ropewayDt, instance, drive);
+          }
         }
       }
     }
   }
 
-  private static void UpdateGravitySpline(float dt, AdvancedRWSpline spline, RWDrvAssgn drvAssgn)
+  private static void UpdateGravitySpline(float dt, AdvancedRWSpline spline, AdvancedRWDrvAssgn drvAssgn)
   {
     double num1 = 1.0 / (double) dt;
     if ((UnityEngine.Object) drvAssgn.drive != (UnityEngine.Object) null || (double) drvAssgn.gravity == 0.0)
       return;
     bool flag1 = (double) drvAssgn.inclination < 0.0;
-    AdvancedRWCarrier AdvancedRWCarrier1 = (AdvancedRWCarrier) null;
+    AdvancedRWCarrier AdvancedRWCarrier1 = null;
     float num2 = -1f;
-    AdvancedRWCarrier AdvancedRWCarrier2 = (AdvancedRWCarrier) null;
+    AdvancedRWCarrier AdvancedRWCarrier2 = null;
     float num3 = -1f;
     foreach (AdvancedRWCarrier carrier in spline.carriers)
     {
@@ -222,245 +223,245 @@ public class AdvancedRWSpline : MonoBehaviour
     if (inverse)
     {
       for (int index = 0; index < points.Count; ++index)
-        vector3Array[index] = !pointsInLocalSpace ? this.transform.InverseTransformPoint(points[points.Count - 1 - index]) : points[points.Count - 1 - index];
+        vector3Array[index] = !pointsInLocalSpace ? transform.InverseTransformPoint(points[points.Count - 1 - index]) : points[points.Count - 1 - index];
     }
     else
     {
       for (int index = 0; index < points.Count; ++index)
-        vector3Array[index] = !pointsInLocalSpace ? this.transform.InverseTransformPoint(points[index]) : points[index];
+        vector3Array[index] = !pointsInLocalSpace ? transform.InverseTransformPoint(points[index]) : points[index];
     }
     this.points = vector3Array;
-    this.ClearTriggersAndSensors();
-    this.RefreshSpline();
+    ClearTriggersAndSensors();
+    RefreshSpline();
   }
 
   public void ClearTriggersAndSensors()
   {
-    this._triggers = new List<RWLuaTrigger>();
-    this._proxySensors = new List<RWLuaProxySensor>();
+    _triggers = new List<AdvancedRWLuaTrigger>();
+    _proxySensors = new List<AdvancedRWLuaProxySensor>();
   }
 
-  private void Start() => this.RefreshSpline();
+  private void Start() => RefreshSpline();
 
   public void Reset()
   {
-    this.points = new Vector3[3]
+    points = new Vector3[3]
     {
       new Vector3(0.0f, 0.0f, -1f),
       new Vector3(0.0f, 0.0f, 0.0f),
       new Vector3(0.0f, 0.0f, 1f)
     };
-    this.segmentLengths = new float[2];
-    this.cumulativeLength = new float[2];
-    this.splineLength = 1f;
-    this.invSplineLength = 1f / this.splineLength;
-    this.nextSplines = new AdvancedRWSpline[0];
-    this.prevSplines = new AdvancedRWSpline[0];
-    this.drives = new List<RWDrvAssgn>();
-    this.RefreshSpline();
+    segmentLengths = new float[2];
+    cumulativeLength = new float[2];
+    splineLength = 1f;
+    invSplineLength = 1f / splineLength;
+    nextSplines = new AdvancedRWSpline[0];
+    prevSplines = new AdvancedRWSpline[0];
+    drives = new List<AdvancedRWDrvAssgn>();
+    RefreshSpline();
   }
 
-  public void RegisterTrigger(RWLuaTrigger trigger) => this._triggers.Add(trigger);
+  public void RegisterTrigger(AdvancedRWLuaTrigger trigger) => _triggers.Add(trigger);
 
-  public void RegisterProxySensor(RWLuaProxySensor sensor) => this._proxySensors.Add(sensor);
+  public void RegisterProxySensor(AdvancedRWLuaProxySensor sensor) => _proxySensors.Add(sensor);
 
   public void CheckTriggers(AdvancedRWCarrier sender, float from, float to)
   {
-    foreach (RWLuaTrigger trigger in this._triggers)
+    foreach (AdvancedRWLuaTrigger trigger in _triggers)
       trigger.CheckIsTriggered(sender, from, to);
-    foreach (RWLuaProxySensor proxySensor in this._proxySensors)
+    foreach (AdvancedRWLuaProxySensor proxySensor in _proxySensors)
       proxySensor.CheckIsTriggered(sender, to);
   }
 
-  public void AddRail(AdvancedRWSpline.AnimatedPartRail rail)
+  public void AddRail(AnimatedPartRail rail)
   {
     if (rail == null)
       return;
-    Array.Resize<AdvancedRWSpline.AnimatedPartRail>(ref this.rails, this.rails.Length + 1);
-    this.rails[this.rails.Length - 1] = rail;
+    Array.Resize<AdvancedRWSpline.AnimatedPartRail>(ref Rails, Rails.Length + 1);
+    Rails[Rails.Length - 1] = rail;
   }
 
   public int GetPointIndex(float position)
   {
-    for (int pointIndex = 0; pointIndex < this.cumulativeLength.Length; ++pointIndex)
+    for (int pointIndex = 0; pointIndex < cumulativeLength.Length; ++pointIndex)
     {
-      if ((double) position <= (double) this.cumulativeLength[pointIndex])
+      if ((double) position <= (double) cumulativeLength[pointIndex])
         return pointIndex;
     }
-    return this.cumulativeLength.Length;
+    return cumulativeLength.Length;
   }
 
   public Vector3 GetPoint(float position)
   {
-    if ((double) position > (double) this.splineLength && (UnityEngine.Object) this.GetNext() != (UnityEngine.Object) null)
-      return this.GetNext().GetPoint(position - this.splineLength);
-    if ((double) position < 0.0 && (UnityEngine.Object) this.GetPrev() != (UnityEngine.Object) null)
-      return this.GetPrev().GetPoint(this.GetPrev().splineLength + position);
-    position = Mathf.Clamp(position, 0.0f, this.splineLength);
-    int pointIndex = this.GetPointIndex(position);
-    Vector3 point1 = this.points[pointIndex];
-    Vector3 point2 = this.points[pointIndex + 1];
-    float t = (float) (1.0 - ((double) this.cumulativeLength[pointIndex] - (double) position) / (double) this.segmentLengths[pointIndex]);
-    return this.smoothMode ? this.transform.TransformPoint(point1 * (float) (3.0 - 2.0 * (double) t) * t * t + point2 * (float) (1.0 + (2.0 * (double) t - 3.0) * (double) t * (double) t)) : this.transform.TransformPoint(Vector3.Lerp(point1, point2, t));
+    if ((double) position > (double) splineLength && (UnityEngine.Object) GetNext() != (UnityEngine.Object) null)
+      return GetNext().GetPoint(position - splineLength);
+    if ((double) position < 0.0 && (UnityEngine.Object) GetPrev() != (UnityEngine.Object) null)
+      return GetPrev().GetPoint(GetPrev().splineLength + position);
+    position = Mathf.Clamp(position, 0.0f, splineLength);
+    int pointIndex = GetPointIndex(position);
+    Vector3 point1 = points[pointIndex];
+    Vector3 point2 = points[pointIndex + 1];
+    float t = (float) (1.0 - ((double) cumulativeLength[pointIndex] - (double) position) / (double) segmentLengths[pointIndex]);
+    return smoothMode ? transform.TransformPoint(point1 * ((float) (3.0 - 2.0 * (double) t) * t * t) + point2 * (float) (1.0 + (2.0 * (double) t - 3.0) * (double) t * (double) t)) : transform.TransformPoint(Vector3.Lerp(point1, point2, t));
   }
 
   public Vector3 GetDirection(float position, bool smooth)
   {
-    position = Mathf.Clamp(position, 0.0f, this.splineLength);
-    int pointIndex = this.GetPointIndex(position);
-    Vector3 point1 = this.points[pointIndex];
-    Vector3 point2 = this.points[pointIndex + 1];
+    position = Mathf.Clamp(position, 0.0f, splineLength);
+    int pointIndex = GetPointIndex(position);
+    Vector3 point1 = points[pointIndex];
+    Vector3 point2 = points[pointIndex + 1];
     if (point1 == point2)
-      return this.transform.TransformDirection(Vector3.up);
+      return transform.TransformDirection(Vector3.up);
     Vector3 vector3_1;
     if (smooth)
     {
-      Vector3 vector3_2 = pointIndex > 0 ? this.points[pointIndex - 1] : this.points[0];
-      float num1 = pointIndex > 0 ? this.cumulativeLength[pointIndex - 1] : this.cumulativeLength[this.cumulativeLength.Length - 1];
-      float num2 = this.cumulativeLength[pointIndex];
+      Vector3 vector3_2 = pointIndex > 0 ? points[pointIndex - 1] : points[0];
+      float num1 = pointIndex > 0 ? cumulativeLength[pointIndex - 1] : cumulativeLength[cumulativeLength.Length - 1];
+      float num2 = cumulativeLength[pointIndex];
       float num3 = position - num1;
       if ((double) num3 < 0.0)
-        num3 += this.cumulativeLength[this.cumulativeLength.Length - 1];
+        num3 += cumulativeLength[cumulativeLength.Length - 1];
       float a = num3 / (num2 - num1);
       vector3_1 = Vector3.Lerp(point1 - vector3_2, point2 - point1, Mathf.Max(a, 0.01f));
     }
     else
       vector3_1 = point2 - point1;
-    return this.transform.TransformDirection(Vector3.Normalize(vector3_1));
+    return transform.TransformDirection(Vector3.Normalize(vector3_1));
   }
 
-  public Vector3 GetDirection(float position) => this.GetDirection(position, false);
+  public Vector3 GetDirection(float position) => GetDirection(position, false);
 
   public int AddPoint(int index, int dir)
   {
     if (dir > 0)
     {
-      if (index >= this.points.Length - 1)
+      if (index >= points.Length - 1)
       {
-        Vector3 point1 = this.points[this.points.Length - 2];
-        Vector3 point2 = this.points[this.points.Length - 1];
-        Array.Resize<Vector3>(ref this.points, this.points.Length + 1);
-        this.points[this.points.Length - 1] = point2 + point2 - point1;
-        this.RefreshSpline();
-        return this.points.Length - 1;
+        Vector3 point1 = points[points.Length - 2];
+        Vector3 point2 = points[points.Length - 1];
+        Array.Resize<Vector3>(ref points, points.Length + 1);
+        points[points.Length - 1] = point2 + point2 - point1;
+        RefreshSpline();
+        return points.Length - 1;
       }
-      Array.Resize<Vector3>(ref this.points, this.points.Length + 1);
-      for (int index1 = this.points.Length - 1; index1 >= index + 1; --index1)
-        this.points[index1] = this.points[index1 - 1];
-      Vector3 point3 = this.points[index];
-      Vector3 point4 = this.points[index + 2];
-      this.points[index + 1] = Vector3.Lerp(point3, point4, 0.5f);
-      this.RefreshSpline();
+      Array.Resize<Vector3>(ref points, points.Length + 1);
+      for (int index1 = points.Length - 1; index1 >= index + 1; --index1)
+        points[index1] = points[index1 - 1];
+      Vector3 point3 = points[index];
+      Vector3 point4 = points[index + 2];
+      points[index + 1] = Vector3.Lerp(point3, point4, 0.5f);
+      RefreshSpline();
       return index + 1;
     }
     if (index <= 0)
     {
-      Array.Resize<Vector3>(ref this.points, this.points.Length + 1);
-      for (int index2 = this.points.Length - 1; index2 >= 1; --index2)
-        this.points[index2] = this.points[index2 - 1];
-      Vector3 point5 = this.points[2];
-      Vector3 point6 = this.points[1];
-      this.points[0] = point6 + point6 - point5;
-      this.RefreshSpline();
+      Array.Resize<Vector3>(ref points, points.Length + 1);
+      for (int index2 = points.Length - 1; index2 >= 1; --index2)
+        points[index2] = points[index2 - 1];
+      Vector3 point5 = points[2];
+      Vector3 point6 = points[1];
+      points[0] = point6 + point6 - point5;
+      RefreshSpline();
       return 0;
     }
-    Array.Resize<Vector3>(ref this.points, this.points.Length + 1);
-    for (int index3 = this.points.Length - 1; index3 >= index; --index3)
-      this.points[index3] = this.points[index3 - 1];
-    Vector3 point7 = this.points[index - 1];
-    Vector3 point8 = this.points[index + 1];
-    this.points[index] = Vector3.Lerp(point7, point8, 0.5f);
-    this.RefreshSpline();
+    Array.Resize<Vector3>(ref points, points.Length + 1);
+    for (int index3 = points.Length - 1; index3 >= index; --index3)
+      points[index3] = points[index3 - 1];
+    Vector3 point7 = points[index - 1];
+    Vector3 point8 = points[index + 1];
+    points[index] = Vector3.Lerp(point7, point8, 0.5f);
+    RefreshSpline();
     return index;
   }
 
   public int RemovePoint(int index)
   {
     int num1 = index;
-    for (int index1 = index + 1; index1 < this.points.Length; ++index1)
-      this.points[index1 - 1] = this.points[index1];
-    Array.Resize<Vector3>(ref this.points, this.points.Length - 1);
-    this.RefreshSpline();
+    for (int index1 = index + 1; index1 < points.Length; ++index1)
+      points[index1 - 1] = points[index1];
+    Array.Resize<Vector3>(ref points, points.Length - 1);
+    RefreshSpline();
     int num2 = num1 < 0 ? 0 : num1;
-    return num2 > this.points.Length - 1 ? this.points.Length - 1 : num2;
+    return num2 > points.Length - 1 ? points.Length - 1 : num2;
   }
 
   public void RefreshSpline()
   {
-    this.RemoveDoubles();
+    RemoveDoubles();
     float num1 = 0.0f;
-    Array.Resize<float>(ref this.segmentLengths, this.points.Length - 1);
-    Array.Resize<float>(ref this.cumulativeLength, this.points.Length - 1);
-    for (int index = 1; index < this.points.Length; ++index)
+    Array.Resize<float>(ref segmentLengths, points.Length - 1);
+    Array.Resize<float>(ref cumulativeLength, points.Length - 1);
+    for (int index = 1; index < points.Length; ++index)
     {
-      Vector3 point = this.points[index - 1];
-      Vector3 vector3 = this.points[index] - point;
-      this.segmentLengths[index - 1] = vector3.magnitude;
-      num1 += this.segmentLengths[index - 1];
-      this.cumulativeLength[index - 1] = num1;
+      Vector3 point = points[index - 1];
+      Vector3 vector3 = points[index] - point;
+      segmentLengths[index - 1] = vector3.magnitude;
+      num1 += segmentLengths[index - 1];
+      cumulativeLength[index - 1] = num1;
     }
     float num2 = 0.0f;
-    for (int index = 0; index < this.drives.Count; ++index)
+    for (int index = 0; index < drives.Count; ++index)
     {
-      RWDrvAssgn drive = this.drives[index];
+      AdvancedRWDrvAssgn drive = drives[index];
       drive.posBegin = num2;
       num2 = drive.posEnd;
-      if (index >= this.drives.Count - 1)
+      if (index >= drives.Count - 1)
         drive.posEnd = num1;
       drive.Refresh();
     }
-    this.splineLength = num1;
-    this.invSplineLength = 1f / this.splineLength;
+    splineLength = num1;
+    invSplineLength = 1f / splineLength;
   }
 
   public void RegisterCarrier(AdvancedRWCarrier carrier)
   {
     if (!((UnityEngine.Object) carrier != (UnityEngine.Object) null))
       return;
-    this.carriers.Add(carrier);
+    carriers.Add(carrier);
   }
 
   public void UnregisterCarrier(AdvancedRWCarrier carrier)
   {
     int index = 0;
-    foreach (AdvancedRWCarrier carrier1 in this.carriers)
+    foreach (AdvancedRWCarrier carrier1 in carriers)
     {
       if ((UnityEngine.Object) carrier == (UnityEngine.Object) carrier1)
       {
-        this.carriers.RemoveAt(index);
+        carriers.RemoveAt(index);
         break;
       }
       ++index;
     }
   }
 
-  public float GetTotalLength() => this.splineLength;
+  public float GetTotalLength() => splineLength;
 
   public float GetProjectedLength()
   {
     float projectedLength = 0.0f;
-    foreach (RWDrvAssgn drive in this.drives)
+    foreach (AdvancedRWDrvAssgn drive in drives)
       projectedLength += drive.GetProjectedLength();
     return projectedLength;
   }
 
-  public RWDrvAssgn GetRwDrvAssgn(float position)
+  public AdvancedRWDrvAssgn GetRwDrvAssgn(float position)
   {
-    foreach (RWDrvAssgn drive in this.drives)
+    foreach (AdvancedRWDrvAssgn drive in drives)
     {
       if ((double) position <= (double) drive.posEnd)
         return drive;
     }
-    return (RWDrvAssgn) null;
+    return (AdvancedRWDrvAssgn) null;
   }
 
   public void RemoveDoubles()
   {
     int index = 1;
-    while (index < this.points.Length)
+    while (index < points.Length)
     {
-      if (this.points[index - 1] == this.points[index])
-        this.RemovePoint(index);
+      if (points[index - 1] == points[index])
+        RemovePoint(index);
       else
         ++index;
     }
@@ -468,12 +469,12 @@ public class AdvancedRWSpline : MonoBehaviour
 
   public void InverseDirection()
   {
-    Vector3[] vector3Array = new Vector3[this.points.Length];
+    Vector3[] vector3Array = new Vector3[points.Length];
     int num = 0;
-    for (int index = this.points.Length - 1; index >= 0; --index)
-      vector3Array[num++] = this.points[index];
-    this.points = vector3Array;
-    this.RefreshSpline();
+    for (int index = points.Length - 1; index >= 0; --index)
+      vector3Array[num++] = points[index];
+    points = vector3Array;
+    RefreshSpline();
   }
 
   public class AnimatedPartRail
@@ -486,4 +487,3 @@ public class AdvancedRWSpline : MonoBehaviour
     public int type;
   }
 }
-*/

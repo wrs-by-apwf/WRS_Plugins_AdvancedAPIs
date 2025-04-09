@@ -186,15 +186,12 @@ public class Lua_AdvancedMaterial
     {
         // assert the number of arguments
         advancedAPIsCore.luaCS_assertNumArgs.Invoke(null, new object[] { L, 2 });
-        advancedAPIsCore.LogInfo("cc");
 
         // get the transform object bind to the id in the lua stack
         Transform transformObj = (Transform)advancedAPIsCore.luaCS_assertGetTransformFromLuaAPI.Invoke(null, new object[] { L, 1, false });
-        advancedAPIsCore.LogInfo("dd");
 
         // Get the GameObject
         GameObject obj = transformObj.gameObject;
-        advancedAPIsCore.LogInfo("aa");
 
         // Get the MeshRenderer
         MeshRenderer mr = obj.GetComponent<MeshRenderer>();
@@ -204,15 +201,11 @@ public class Lua_AdvancedMaterial
             return 0;
         }
 
-        advancedAPIsCore.LogInfo("rr");
-
         // Get the Material
         Material ObjectMaterial = mr.sharedMaterial;
-        advancedAPIsCore.LogInfo("jj");
 
         // assert the string
         string filename = (string)advancedAPIsCore.luaCS_assertGetString.Invoke(null, new object[] { L, 2, false });
-        advancedAPIsCore.LogInfo("gg");
 
         // if the filename extension is not .png then we refuse to do anything
         if (!filename.EndsWith(".png"))
@@ -229,16 +222,12 @@ public class Lua_AdvancedMaterial
             }
         }
 
-        advancedAPIsCore.LogInfo("da");
-
         // make sure the filename is not empty
         if (string.IsNullOrEmpty(filename))
         {
             advancedAPIsCore.LogError("The filename cannot be empty");
             return 0;
         }
-
-        advancedAPIsCore.LogInfo("dz");
 
         // make sure the filename does not contain any path
         if (filename.Contains("/"))
@@ -247,29 +236,21 @@ public class Lua_AdvancedMaterial
             return 0;
         }
 
-        advancedAPIsCore.LogInfo("sd");
-
-        // make sure the filename does not contain any malicious characters, code, etc
+        // make sure the filename does not contain any malicious characters
         if (filename.Contains(".."))
         {
             advancedAPIsCore.LogError("bruh, you serious bitch");
             return 0;
         }
 
-        advancedAPIsCore.LogInfo("tr");
-
         // check if the file exists
         string path = CustomLogosPath + "/" + filename;
-
-        advancedAPIsCore.LogInfo("dfg");
 
         if (!File.Exists(path))
         {
             advancedAPIsCore.LogError($"The file '{filename}' does not exist in the CustomLogos folder");
             return 0;
         }
-
-        advancedAPIsCore.LogInfo("zrdfs");
         
         // if a texture already exist make it go away (memory leak)
         if (_texture != null)
@@ -290,9 +271,6 @@ public class Lua_AdvancedMaterial
 
         // Apply the texture to the material
         ObjectMaterial.SetTexture("_MainTex", _texture);
-
-
-        advancedAPIsCore.LogInfo("dszefsdfsdfdyrthedzze");
 
         return 0;
     }
